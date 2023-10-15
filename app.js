@@ -8,9 +8,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(routers);
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+require("dotenv").config();
 
 const dbUri = process.env.DATABASE_URL;
 const PORT = process.env.PORT || 3000;
