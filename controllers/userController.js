@@ -40,7 +40,7 @@ exports.createUser = async (req, res) => {
       message: "Data missing",
     });
   }
-  const { valid, reason, validators } = await isEmailvalid(email);
+  const { valid, reason, validators } = isEmailvalid(email);
   const data = {
     from: "minbhonethantajm@gmail.com",
     to: email,
