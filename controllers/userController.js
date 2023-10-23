@@ -35,42 +35,33 @@ async function isEmailvalid(email) {
 exports.createUser = async (req, res) => {
   console.log(req.body);
   const { email, datas } = req.body;
-  // if (!email || !datas) {
-  //   return res.status(400).send({
-  //     message: "Data missing",
-  //   });
-  // }
-  // const { valid, reason, validators } = await isEmailvalid(email);
-  // const data = {
-  //   from: "minbhonethantajm@gmail.com",
-  //   to: email,
-  //   subject: "Thank you",
-  //   text: `Dear customer,\n\nThank you for choosing our apartment retailer services. We appreciate your trust in us and look forward to assisting you in finding the perfect apartment. If you have any questions or need further assistance, please don't hesitate to reach out. We're here to help!\n\nSincerely, Atxapt`,
-  // };
-  // if (valid) {
-  //   const emailSender = await send(data);
-  //   userModel
-  //     .create({
-  //       email: email,
-  //       datas: datas,
-  //     })
-  //     .then(() => {
-  //       res.json({ msg: "Successfully created", emailSender });
-  //     })
-  //     .catch((err) => console.log(err));
-  // } else {
-  //   return res.status(400).send({
-  //     message: "Please provide a valid email address.",
-  //     reason: validators[reason].reason,
-  //   });
-  // }
-  userModel
-    .create({
-      email: email,
-      datas: datas,
-    })
-    .then(() => {
-      res.json({ msg: "Successfully created", emailSender });
-    })
-    .catch((err) => console.log(err));
+  if (!email || !datas) {
+    return res.status(400).send({
+      message: "Data missing",
+    });
+  }
+  const { valid, reason, validators } = await isEmailvalid(email);
+  const data = {
+    from: "minbhonethantajm@gmail.com",
+    to: email,
+    subject: "Thank you",
+    text: `Dear customer,\n\nThank you for choosing our apartment retailer services. We appreciate your trust in us and look forward to assisting you in finding the perfect apartment. If you have any questions or need further assistance, please don't hesitate to reach out. We're here to help!\n\nSincerely, Atxapt`,
+  };
+  if (valid) {
+    // const emailSender = await send(data);
+    userModel
+      .create({
+        email: email,
+        datas: datas,
+      })
+      .then(() => {
+        res.json({ msg: "Successfully created", emailSender });
+      })
+      .catch((err) => console.log(err));
+  } else {
+    return res.status(400).send({
+      message: "Please provide a valid email address.",
+      reason: validators[reason].reason,
+    });
+  }
 };
