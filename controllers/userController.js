@@ -55,7 +55,7 @@ exports.createUser = async (req, res) => {
         datas: datas,
       })
       .then(() => {
-        res.json({ msg: "Successfully created", emailSender });
+        res.json({ msg: "Successfully created" });
       })
       .catch((err) => console.log(err));
   } else {
