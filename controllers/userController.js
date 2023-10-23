@@ -28,8 +28,14 @@ const send = (data) => {
   });
 };
 
-async function isEmailvalid(email) {
-  return emailValidator.validate(email);
+async function isEmailValid(email) {
+  try {
+    const { valid, reason, validators } = await emailValidator.validate(email);
+    return { valid, reason, validators };
+  } catch (error) {
+    // Handle validation errors
+    return { valid: false, reason: "timeout", validators: {} };
+  }
 }
 
 exports.createUser = async (req, res) => {
@@ -40,7 +46,7 @@ exports.createUser = async (req, res) => {
       message: "Data missing",
     });
   }
-  const { valid, reason, validators } = isEmailvalid(email);
+  const { valid, reason, validators } = await emailValidator.validate(email);
   const data = {
     from: "minbhonethantajm@gmail.com",
     to: email,
@@ -48,14 +54,14 @@ exports.createUser = async (req, res) => {
     text: `Dear customer,\n\nThank you for choosing our apartment retailer services. We appreciate your trust in us and look forward to assisting you in finding the perfect apartment. If you have any questions or need further assistance, please don't hesitate to reach out. We're here to help!\n\nSincerely, Atxapt`,
   };
   if (valid) {
-    // const emailSender = await send(data);
+    const emailSender = await send(data);
     userModel
       .create({
         email: email,
         datas: datas,
       })
       .then(() => {
-        res.json({ msg: "Successfully created" });
+        res.json({ msg: "Successfully created", emailSender });
       })
       .catch((err) => console.log(err));
   } else {
