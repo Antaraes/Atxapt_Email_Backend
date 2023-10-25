@@ -2,7 +2,7 @@ const userModel = require("../models/user");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-const emailValidator = require("deep-email-validator");
+const validator = require("email-validator");
 
 const nodemailer = require("nodemailer");
 
@@ -28,16 +28,6 @@ const send = (data) => {
   });
 };
 
-async function isEmailValid(email) {
-  try {
-    const { valid, reason, validators } = await emailValidator.validate(email);
-    return { valid, reason, validators };
-  } catch (error) {
-    // Handle validation errors
-    return { valid: false, reason: "timeout", validators: {} };
-  }
-}
-
 exports.createUser = async (req, res) => {
   console.log(req.body);
   const { email, datas } = req.body;
@@ -46,14 +36,14 @@ exports.createUser = async (req, res) => {
       message: "Data missing",
     });
   }
-  const { valid, reason, validators } = await emailValidator.validate(email);
+  const isValidEmail = validator.validate(email);
   const data = {
     from: "minbhonethantajm@gmail.com",
     to: email,
     subject: "Thank you",
     text: `Dear customer,\n\nThank you for choosing our apartment retailer services. We appreciate your trust in us and look forward to assisting you in finding the perfect apartment. If you have any questions or need further assistance, please don't hesitate to reach out. We're here to help!\n\nSincerely, Atxapt`,
   };
-  if (valid) {
+  if (isValidEmail) {
     const emailSender = await send(data);
     userModel
       .create({
@@ -65,9 +55,6 @@ exports.createUser = async (req, res) => {
       })
       .catch((err) => console.log(err));
   } else {
-    return res.status(400).send({
-      message: "Please provide a valid email address.",
-      reason: validators[reason].reason,
-    });
+    res.json({ msg: "Error creating" });
   }
 };
